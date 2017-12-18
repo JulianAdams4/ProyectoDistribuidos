@@ -1,0 +1,4 @@
+# Archivos y carpetas ignorados en los commits
+
+/node_modules
+

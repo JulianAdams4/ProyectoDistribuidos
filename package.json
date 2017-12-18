@@ -2,7 +2,7 @@
   "name": "proyectodistribuidos",
   "version": "1.0.0",
   "description": "Proyecto final de la materia Sistemas Distribuidos 2017-2T",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "start": "node ./bin/www",
     "test": "test"

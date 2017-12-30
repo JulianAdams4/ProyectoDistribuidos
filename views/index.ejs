@@ -2,10 +2,48 @@
 <html>
   <head>
     <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <style>
+		body {
+		  padding: 50px;
+		  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+		}
+
+		a {
+		  color: #00B7FF;
+		}
+    </style>
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+    <h1 style="margin-bottom: 0px"><%= title %></h1>
+    <h3 style="margin: 1% 0% 3% 0%"><small>From:  <%= from %></small></h3>
+    <!-- <h3>Response time:  <%= responseTime %> ms</h3> -->
+
+    <h1 style="margin-bottom: 0px"> Noticias: </h1>
+
+	<% for(var i=0; i < noticias.length; i++) { %>
+	   <div class="noticia" style="margin: 1% 2%">
+	   	<span class="encabezado-noticia">
+	   		<span style="width: 50%; text-align: left; float: left;">
+	   			<h3 style="margin: 1% 0% 2% 5%">
+	   				<%= noticias[i].titulo %>
+	   			</h3>
+	   		</span>
+	   		<span style="width: 50%; text-align: right; float: left;">
+	   			<h3 style="margin: 1% 10% 2% 1%">
+	   				( <%= noticias[i].num_accesos %> visitas )
+	   			</h3>
+	   		</span>
+	   	</span>
+
+	    <span class="contenido-noticia">
+	    	<p style="margin: 1% 0% 1% 4%; font-size: 1.2em;">
+	    		<%= noticias[i].descripcion %>
+	    	</p>
+	    </span> 
+
+	    <hr>
+	   </div>
+	<% } %>
+
   </body>
 </html>

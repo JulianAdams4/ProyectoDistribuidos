@@ -1,0 +1,14 @@
+CREATE DATABASE IF NOT EXISTS prueba;
+
+CREATE TABLE `prueba`.`distribuido` (
+  `id` INT NULL,
+  `descripcion` VARCHAR(50) NULL,
+  `rss` VARCHAR(100) NULL,
+  `revista` VARCHAR(45) NULL,
+  `opcional` VARCHAR(10) NULL,
+  `token_str` VARCHAR(45) NULL,
+  `page` VARCHAR(45) NULL,
+  `token_num` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`));
+
+select * from prueba.distribuido;

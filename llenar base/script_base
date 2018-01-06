@@ -3,14 +3,16 @@ CREATE DATABASE IF NOT EXISTS prueba;
 CREATE TABLE `prueba`.`distribuido` (
   `id` INT NULL,
   `descripcion` VARCHAR(150) NULL,
-  `rss` VARCHAR(150) NULL,
-  `revista` VARCHAR(50) NULL,
+  `rss` VARCHAR(500) NULL,
+  `revista` VARCHAR(100) NULL,
   `opcional` VARCHAR(10) NULL,
   `token_str` VARCHAR(50) NULL,
-  `pagaginas` VARCHAR(50) NULL,
+  `paginas` VARCHAR(100) NULL,
   `token_num` VARCHAR(50) NULL,
   PRIMARY KEY (`id`));
 
 select * from prueba.distribuido;
 
 insert into prueba.distribuido (descripcion, rss, revista, opcional, token_str, paginas, token_num) VALUES ('Chinas trade deficit and structural worries in Europe, among the main issues', 'http://www.fxstreet.com/analysis/strategic-currency-briefing/2014/03/10/', 'FXstreet.com', 'b', 'dPhGU51DcrolUIMxbRm0InaHGA2XM', 'www.fxstreet.com', '1394470503887' );
+
+ select count(*) from prueba.distribuido;

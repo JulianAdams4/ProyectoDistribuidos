@@ -22,12 +22,7 @@ class Iface(object):
     def ping(self):
         pass
 
-    def get(self, num1, num2):
-        """
-        Parameters:
-         - num1
-         - num2
-        """
+    def getTopNews(self):
         pass
 
     def zip(self):
@@ -70,25 +65,18 @@ class Client(Iface):
         iprot.readMessageEnd()
         return
 
-    def get(self, num1, num2):
-        """
-        Parameters:
-         - num1
-         - num2
-        """
-        self.send_get(num1, num2)
-        return self.recv_get()
+    def getTopNews(self):
+        self.send_getTopNews()
+        return self.recv_getTopNews()
 
-    def send_get(self, num1, num2):
-        self._oprot.writeMessageBegin('get', TMessageType.CALL, self._seqid)
-        args = get_args()
-        args.num1 = num1
-        args.num2 = num2
+    def send_getTopNews(self):
+        self._oprot.writeMessageBegin('getTopNews', TMessageType.CALL, self._seqid)
+        args = getTopNews_args()
         args.write(self._oprot)
         self._oprot.writeMessageEnd()
         self._oprot.trans.flush()
 
-    def recv_get(self):
+    def recv_getTopNews(self):
         iprot = self._iprot
         (fname, mtype, rseqid) = iprot.readMessageBegin()
         if mtype == TMessageType.EXCEPTION:
@@ -96,12 +84,12 @@ class Client(Iface):
             x.read(iprot)
             iprot.readMessageEnd()
             raise x
-        result = get_result()
+        result = getTopNews_result()
         result.read(iprot)
         iprot.readMessageEnd()
         if result.success is not None:
             return result.success
-        raise TApplicationException(TApplicationException.MISSING_RESULT, "get failed: unknown result")
+        raise TApplicationException(TApplicationException.MISSING_RESULT, "getTopNews failed: unknown result")
 
     def zip(self):
         """
@@ -124,7 +112,7 @@ class Processor(Iface, TProcessor):
         self._handler = handler
         self._processMap = {}
         self._processMap["ping"] = Processor.process_ping
-        self._processMap["get"] = Processor.process_get
+        self._processMap["getTopNews"] = Processor.process_getTopNews
         self._processMap["zip"] = Processor.process_zip
 
     def process(self, iprot, oprot):
@@ -165,13 +153,13 @@ class Processor(Iface, TProcessor):
         oprot.writeMessageEnd()
         oprot.trans.flush()
 
-    def process_get(self, seqid, iprot, oprot):
-        args = get_args()
+    def process_getTopNews(self, seqid, iprot, oprot):
+        args = getTopNews_args()
         args.read(iprot)
         iprot.readMessageEnd()
-        result = get_result()
+        result = getTopNews_result()
         try:
-            result.success = self._handler.get(args.num1, args.num2)
+            result.success = self._handler.getTopNews()
             msg_type = TMessageType.REPLY
         except TTransport.TTransportException:
             raise
@@ -183,7 +171,7 @@ class Processor(Iface, TProcessor):
             logging.exception('Unexpected exception in handler')
             msg_type = TMessageType.EXCEPTION
             result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
-        oprot.writeMessageBegin("get", msg_type, seqid)
+        oprot.writeMessageBegin("getTopNews", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
         oprot.trans.flush()
@@ -288,17 +276,8 @@ ping_result.thrift_spec = (
 )
 
 
-class get_args(object):
-    """
-    Attributes:
-     - num1
-     - num2
-    """
+class getTopNews_args(object):
 
-
-    def __init__(self, num1=None, num2=None,):
-        self.num1 = num1
-        self.num2 = num2
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -309,16 +288,6 @@ class get_args(object):
             (fname, ftype, fid) = iprot.readFieldBegin()
             if ftype == TType.STOP:
                 break
-            if fid == 1:
-                if ftype == TType.I32:
-                    self.num1 = iprot.readI32()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
-                if ftype == TType.I32:
-                    self.num2 = iprot.readI32()
-                else:
-                    iprot.skip(ftype)
             else:
                 iprot.skip(ftype)
             iprot.readFieldEnd()
@@ -328,15 +297,7 @@ class get_args(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
-        oprot.writeStructBegin('get_args')
-        if self.num1 is not None:
-            oprot.writeFieldBegin('num1', TType.I32, 1)
-            oprot.writeI32(self.num1)
-            oprot.writeFieldEnd()
-        if self.num2 is not None:
-            oprot.writeFieldBegin('num2', TType.I32, 2)
-            oprot.writeI32(self.num2)
-            oprot.writeFieldEnd()
+        oprot.writeStructBegin('getTopNews_args')
         oprot.writeFieldStop()
         oprot.writeStructEnd()
 
@@ -353,15 +314,12 @@ class get_args(object):
 
     def __ne__(self, other):
         return not (self == other)
-all_structs.append(get_args)
-get_args.thrift_spec = (
-    None,  # 0
-    (1, TType.I32, 'num1', None, None, ),  # 1
-    (2, TType.I32, 'num2', None, None, ),  # 2
+all_structs.append(getTopNews_args)
+getTopNews_args.thrift_spec = (
 )
 
 
-class get_result(object):
+class getTopNews_result(object):
     """
     Attributes:
      - success
@@ -381,8 +339,14 @@ class get_result(object):
             if ftype == TType.STOP:
                 break
             if fid == 0:
-                if ftype == TType.I32:
-                    self.success = iprot.readI32()
+                if ftype == TType.LIST:
+                    self.success = []
+                    (_etype3, _size0) = iprot.readListBegin()
+                    for _i4 in range(_size0):
+                        _elem5 = News()
+                        _elem5.read(iprot)
+                        self.success.append(_elem5)
+                    iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
             else:
@@ -394,10 +358,13 @@ class get_result(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
-        oprot.writeStructBegin('get_result')
+        oprot.writeStructBegin('getTopNews_result')
         if self.success is not None:
-            oprot.writeFieldBegin('success', TType.I32, 0)
-            oprot.writeI32(self.success)
+            oprot.writeFieldBegin('success', TType.LIST, 0)
+            oprot.writeListBegin(TType.STRUCT, len(self.success))
+            for iter6 in self.success:
+                iter6.write(oprot)
+            oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -415,9 +382,9 @@ class get_result(object):
 
     def __ne__(self, other):
         return not (self == other)
-all_structs.append(get_result)
-get_result.thrift_spec = (
-    (0, TType.I32, 'success', None, None, ),  # 0
+all_structs.append(getTopNews_result)
+getTopNews_result.thrift_spec = (
+    (0, TType.LIST, 'success', (TType.STRUCT, [News, None], False), None, ),  # 0
 )
 
 

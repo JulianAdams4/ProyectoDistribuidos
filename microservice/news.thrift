@@ -1,3 +1,4 @@
+
 namespace py news
 
 struct News {
@@ -14,7 +15,7 @@ service GetNews {
    
    void ping(),
 
-   i32 get(1:i32 num1, 2:i32 num2),
+   list<News> getTopNews(),
 
    /**
     * This method has a oneway modifier. That means the client only makes

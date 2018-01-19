@@ -1,0 +1,33 @@
+version: "3"
+services:
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    links:
+      - server:server
+  
+  server:
+    build: ./server
+    expose:
+      - "9090"
+    volumes:
+      - ./server:/srv/app
+    links:
+      - redis:redis
+      - mysql:mysql
+  
+  redis:
+    build: ./redis
+    expose: 
+      - "6379"
+  
+  mysql:
+    build: ./mysql 
+    env_file:
+      - ./mysql/conf.env
+    expose:
+      - "3306"
+    volumes:
+      - ./mysql/logs:/var/lib/mysql/mysql-bin
+  

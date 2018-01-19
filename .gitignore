@@ -2,3 +2,19 @@
 
 /node_modules
 
+#git ignore Python
+*.pyc
+*.pyc
+
+#git ignore thrift
+_build/
+_tags
+configure
+setup.data
+setup.ml
+myocamlbuild.ml
+*/META
+*/*.mllib
+*/*.mldylib
+Makefile
+OCamlMakefile

@@ -37,6 +37,7 @@ class NewsHandler():
         print('ping()')
 
     def getTopNews(self):
+        listNews = []
         print("Get notices")
         query = "SELECT * FROM News;" 
         startTime = datetime.now()
@@ -44,7 +45,10 @@ class NewsHandler():
         stopTime = datetime.now()
         # print("Tiempo transcurrido: %f"%stopTime-startTime)
         print (result)
-        listNews = [News(), News("nuevo", "nuevo")]
+        for res in result:
+
+            listNews.append(News(str(res[0]), str(res[1])))
+        
         return listNews
 
     def cache_redis(self, sql, TTL = 360):

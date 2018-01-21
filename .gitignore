@@ -16,5 +16,4 @@ myocamlbuild.ml
 */META
 */*.mllib
 */*.mldylib
-Makefile
 OCamlMakefile

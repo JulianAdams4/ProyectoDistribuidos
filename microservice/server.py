@@ -22,8 +22,8 @@ from thrift.server import TServer
 
 DB_HOST = 'localhost' 
 DB_USER = 'root' 
-DB_PASS = 'root1234' 
-DB_NAME = 'news'
+DB_PASS = '1234' 
+DB_NAME = 'distribuidos'
 R_SERVER = redis.Redis("localhost")
 datos = [DB_HOST, DB_USER, DB_PASS, DB_NAME] 
 conn = MySQLdb.connect(*datos) # Conectar a la base de datos 
@@ -39,7 +39,7 @@ class NewsHandler():
     def getTopNews(self):
         listNews = []
         print("Get notices")
-        query = "SELECT * FROM News;" 
+        query = "SELECT * FROM noticias order by num_accesos limit 10;" 
         startTime = datetime.now()
         result = self.cache_redis(query)
         stopTime = datetime.now()
@@ -47,7 +47,7 @@ class NewsHandler():
         print (result)
         for res in result:
 
-            listNews.append(News(str(res[0]), str(res[1])))
+            listNews.append(News(str(res[1]), str(res[2]), int(res[0]), int(res[3])))
         
         return listNews
 
@@ -55,10 +55,12 @@ class NewsHandler():
         # INPUT 1 : SQL query
         # INPUT 2 : Time To Life
         # OUTPUT  : Array of result
-
+        
         # Create a hash key
-        hash = hashlib.sha224(sql).hexdigest()
-        key = "sql_cache:" + hash
+        tiempo = time.strftime("%H:%M")
+        hash = hashlib.sha224(tiempo).hexdigest()
+        
+        key = "tiempo_cache:" + hash
         print ("Created Key\t : %s" % key)
 
         # Check if data is in cache.

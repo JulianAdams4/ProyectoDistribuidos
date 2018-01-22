@@ -4,6 +4,8 @@ namespace py news
 struct News {
   1: string title,
   2: string description,
+  3: i32 num_noticia,
+  4: i32 num_accesos,
 }
 
 exception InvalidOperation {

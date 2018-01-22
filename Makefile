@@ -1,12 +1,21 @@
-#=================================================
+#==================================================================
+#
 #   Nodejs Scripts for initialize the project
 #   	start = run the project
 #   	install = install dependencies
 #   	clean = clean installed dependencies
-#=================================================
+#
+#   Nota;
+#     Poner en orden los valores de las entradas de cada target
+#   Por ejemplo:
+#     all: database start
+#
+#   Ejecutara primero database y luego start
+#
+#==================================================================
 
-all: database start
-	database && start
+all: install database start
+	intall && database && start
 
 
 install:

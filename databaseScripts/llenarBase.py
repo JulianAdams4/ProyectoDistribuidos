@@ -1,4 +1,3 @@
-
 import pymysql
 
 #ojo poner la coneccion y la base a donde se vana a conectar

@@ -9,6 +9,7 @@ var responseTime = require('response-time')
 var axios = require('axios');
 var redis = require('redis');
 var Sequelize = require('sequelize');
+var envs = require('./env/envs');
 
 
 
@@ -21,9 +22,11 @@ var Sequelize = require('sequelize');
 *	Creando la conexión  
 *--------------------------*/
 const sequelize = new Sequelize({
-  	database: 'distribuidos',
-  	username: 'root', password: 'root',
-  	dialect: 'mysql', logging: false
+  database: envs.database,
+  username: envs.user, 
+  password: envs.password,
+  dialect: envs.dialect, 
+  logging: false
 });
 
 /*------------------------------  
@@ -34,25 +37,32 @@ sequelize
   .then(() => {
     console.log('[MySQL] Conectado con la BDD.');
   })
-  .catch(err => {
-    console.error('[MySQL] No se pudo conectar con la BDD: ', err);
+  .catch( err => {
+    throw new Error('[MySQL] No se pudo conectar con la BDD: ', err);
   });
 
 /*------------------------------  
 *	Configurando el modelo
 *------------------------------*/
-var NoticiasModel = sequelize.define('noticias', {
-  	num_noticia: { 
-    	type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true 
-  	},
-  	titulo: Sequelize.STRING,
-  	descripcion: Sequelize.STRING,
-  	num_accesos: {
-  		type: Sequelize.INTEGER, defaultValue: 0
-  	}
-});
+var NoticiasModel = sequelize.define( envs.tableName , 
+  {
+    num_noticia: {
+      type: Sequelize.INTEGER, 
+      autoIncrement: true, 
+      primaryKey: true 
+    },
+    titulo: Sequelize.STRING,
+    descripcion: Sequelize.STRING,
+    num_accesos: {
+      type: Sequelize.INTEGER, 
+      defaultValue: 0
+    }
+  },
+  { timestamps: false }
+);
 
-sequelize.sync({force: true});
+NoticiasModel.sync();
+
 
 
 
@@ -74,6 +84,7 @@ var client = redis.createClient(REDIS_PORT);
 client.on('error', function (err) {
     console.log("[Redis] Error al conectarse: " + err);
 });
+
 
 
 
@@ -109,58 +120,21 @@ app.use(express.static(path.join(__dirname, 'public')));
 //		Funciones 
 //====================================
 /*-----------------------------------
-*	Call the GitHub API to fetch 
-*	information about the 
-*	user's repositories
-*-----------------------------------*/
-function getUserRepositories(user) {
-  var githubEndpoint = 'https://api.github.com/users/' + user + '/repos' + '?per_page=100';
-  return axios.get(githubEndpoint);
-}
-
-/*-----------------------------------
-*	Add up all the stars and return 
-*	the total number of stars 
-*	across all repositories
-*-----------------------------------*/
-function computeTotalStars(repositories) {
-  return repositories.data.reduce(function(prev, curr) {
-    return prev + curr.stargazers_count
-  }, 0);
-}
-
-/*-----------------------------------
 *	Función que obtiene las noticias
 *	de la BDD
 *-----------------------------------*/
 function ObtenerDeBDD(limite, fn){
-	NoticiasModel.findAll({ limit: limite }).then( noticias => {
+	NoticiasModel.findAll({ 
+    limit: limite,
+    order: [
+      ['num_accesos', 'DESC']
+    ] 
+  }).then( noticias => {
 		var data = noticias.map((noticia) => { 
 			return noticia.get({ plain: false }) 
 		});
-    	fn(data);
-  	});
-}
-
-/*-----------------------------------
-*	Función que obtiene las noticias
-*	de la BDD
-*-----------------------------------*/
-function GuardarEnBDD(tituloNoticia, contenidoNoticia){
-  	NoticiasModel.build({ 
-  		titulo: tituloNoticia,
-  		descripcion: contenidoNoticia  	
-  	})
-  	.save()
-  	.then(anotherTask => {
-    	// you can now access the currently saved task with the variable anotherTask... nice!
-    	//console.log("anotherTask:");
-    	//console.log(anotherTask);
-  	})
-  	.catch(error => {
-    	console.log("[MySQL] Error al guardar: ");
-    	console.log(error);
-  	})
+    fn(data);
+  });
 }
 
 /*-----------------------------------
@@ -169,27 +143,27 @@ function GuardarEnBDD(tituloNoticia, contenidoNoticia){
 *	contrario, continua a la
 *	siguiente función.
 *-----------------------------------*/
-function VerificarCache(req, res, next) {
-	var start = new Date();
-	// Usuario a buscar
-  	var fechaAMD = new Date().toISOString().replace(/T.+/, '');
-  	// Consultamos la caché de Redis
-  	client.get(fechaAMD, function(error, result) {
-    	// El resultado está en caché -> Retornarlo inmediatamente
-    	if (result) {
-    		var data = JSON.parse(result);
-  			return res.render('index', { 
-  				title: 'Top 10 noticias',
-  				from: "Redis cache",
-  				responseTime: new Date() - start,
-  				noticias: data
-  			});
-    	}
-    	// El resultado no está en cache -> continúa a la sgt función
-    	else {
-      		next();
-    	}
-  	});
+const VerificarCache = (req, res, next) => {
+  const start = new Date();
+  // Usuario a buscar
+    const fechaAMD = new Date().toISOString().replace(/T.+/, '');
+    // Consultamos la caché de Redis
+    client.get(fechaAMD, (error, result) => {
+      // El resultado está en caché -> Retornarlo inmediatamente
+      if (result) {
+        var data = JSON.parse(result);
+        return res.render('index', { 
+          title: 'Top 10 noticias',
+          from: "Redis cache",
+          responseTime: new Date() - start,
+          noticias: data
+        });
+      }
+      // El resultado no está en cache -> continúa a la sgt función
+      else {
+        next();
+      }
+    });
 }
 
 /*-----------------------------------
@@ -215,37 +189,18 @@ app.get('/', VerificarCache, function(req, res, next) {
   	// Se consulta la BDD
 	ObtenerDeBDD(10, (data) => {
  		// Generamos la clave (fecha de hoy)
-  		var fechaAMD = new Date().toISOString().replace(/T.+/, '');
+  	var fechaAMD = new Date().toISOString().replace(/T.+/, '');
 		// Guardamos la key-value <fechaAMD, totalStars> en caché
 		// Expira en 1 minuto (60s)
-		GuardarEnCache(fechaAMD, JSON.stringify(data), 60);
-		console.log( res["headers"] );
-  		return res.render('index', { 
-  			title: 'Top 10 noticias',
-  			from: "Base de datos",
-  			responseTime: new Date() - start,
-  			noticias: data
-  		});
+		GuardarEnCache(fechaAMD, JSON.stringify(data), envs.caheTime);
+  	return res.render('index', { 
+  		title: 'Top 10 noticias',
+  		from: "Base de datos",
+  		responseTime: new Date() - start,
+  		noticias: data
+  	});
 	});
 });
-
-/*----------------------------------------
-*	Crea noticias ***
-*-----------------------------------------*/
-app.get('/crearNoticias', function(req, res) {
-	GuardarEnBDD("Noticia 1", "Contenido de la noticia 1");
-	GuardarEnBDD("Noticia 2", "Contenido de la noticia 2");
-	GuardarEnBDD("Noticia 3", "Contenido de la noticia 3");
-	GuardarEnBDD("Noticia 4", "Contenido de la noticia 4");
-	GuardarEnBDD("Noticia 5", "Contenido de la noticia 5");
-	GuardarEnBDD("Noticia 6", "Contenido de la noticia 6");
-	GuardarEnBDD("Noticia 7", "Contenido de la noticia 7");
-	GuardarEnBDD("Noticia 8", "Contenido de la noticia 8");
-	GuardarEnBDD("Noticia 9", "Contenido de la noticia 9");
-	GuardarEnBDD("Noticia 10", "Contenido de la noticia 10");
-	return res.send("Creadas!");
-});
-
 
 
 
@@ -276,6 +231,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
 
 
 

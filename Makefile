@@ -5,11 +5,39 @@
 #   	clean = clean installed dependencies
 #=================================================
 
+all: database start
+	database && start
+
+
+install:
+	@echo ".------------------------------------.";
+	@echo "|     Instalando dependencias...     |";
+	@echo "'------------------------------------'";
+	npm install
+	@echo ".-----------------------------.";
+	@echo "|     Operacion terminada     |";
+	@echo "'-----------------------------'";
+
+
+database:
+	@echo ".------------------------------------.";
+	@echo "|     Llenando base de datos...      |";
+	@echo "'------------------------------------'";
+	@cd ./databaseScripts && node ./seedDatabase.js
+	@echo ".-----------------------------.";
+	@echo "|     Operacion terminada     |";
+	@echo "'-----------------------------'";
+
+
 start:
 	npm start
 
-install:
-	npm install
 
 clean:
-	rm -rf ./node_modules
+	@echo ".------------------------------------.";
+	@echo "|    Eliminando 'node_modules'...    |";
+	@echo "'------------------------------------'";
+	@rm -rf ./node_modules
+	@echo ".-----------------------------.";
+	@echo "|     Operacion terminada     |";
+	@echo "'-----------------------------'";

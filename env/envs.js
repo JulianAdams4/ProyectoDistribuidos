@@ -3,6 +3,6 @@ module.exports = {
 	"database": "distribuidos",
 	"tableName": "noticias",
 	"user": "root",
-	"password": "1994",
+	"password": "root",
 	"cacheTime": 60
 }

@@ -39,7 +39,7 @@ class NewsHandler():
     def getTopNews(self):
         listNews = []
         print("Get notices")
-        query = "SELECT * FROM noticias order by num_accesos limit 10;" 
+        query = "SELECT * FROM noticias order by num_accesos DESC limit 10;" 
         startTime = datetime.now()
         result = self.cache_redis(query)
         stopTime = datetime.now()

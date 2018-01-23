@@ -217,6 +217,21 @@ app.get('/benchmark', function (err, res) {
   return res.render('benchmark');
 });
 
+app.get('/microservice', function (err, res) {
+  var start = new Date();
+  //var data = GetNewsFromMicroServices();
+  var client = thrift.createClient(News, connection);
+  client.getTopNews(function(err, response) {
+    // print(response);
+    console.log(response);
+    return res.render('microservices', { 
+      title: 'Top 10 noticias',
+      responseTime: new Date() - start,
+      noticias: response
+    });
+  });
+  
+});
 
 //==================================================
 //		Rutas no encontradas
@@ -227,10 +242,6 @@ app.use(function(req, res, next) {
   err.status = 404;
   next(err);  // Continua al Error handler
 });
-
-
-
-
 
 //===========================
 //		Error handler
@@ -245,6 +256,36 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+
+//===========================
+//       Microservicio
+//===========================
+var thrift = require('thrift');
+const assert = require('assert');
+var News = require('./microservice/gen-nodejs/GetNews');
+
+var transport = thrift.TBufferedTransport;
+var protocol = thrift.TBinaryProtocol;
+
+var connection = thrift.createConnection("localhost", 9090, {
+  transport : transport,
+  protocol : protocol
+});
+
+connection.on('error', function(err) {
+  assert(false, err);
+});
+
+function GetNewsFromMicroServices() {
+  var client = thrift.createClient(News, connection);
+  client.getTopNews(function(err, response) {
+
+    
+    
+    // print(response);
+    return response;
+  });
+}
 
 
 

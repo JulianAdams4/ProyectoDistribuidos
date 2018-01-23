@@ -108,7 +108,7 @@ app.use(responseTime());
 /*------------------------------------------
 *    Log por consola de los requerimientos
 *-------------------------------------------*/
-app.use(logger('tiny'));
+app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -192,17 +192,13 @@ function GuardarEnCache(clave, valor, tiempo) {
 //		Rutas
 //================================
 /*-------------------------------
-*	Cargar pagina principal
+*	  Cargar pagina principal
+*   sin uso de cache
 *--------------------------------*/
-app.get('/', VerificarCache, function(req, res, next) {
-  	var start = new Date();
-  	// Se consulta la BDD
+app.get('/', function(req, res, next) {
+  // Se consulta la BDD
 	ObtenerDeBDD(10, (data) => {
- 		// Generamos la clave (fecha de hoy)
-  	var fechaAMD = new Date().toISOString().replace(/T.+/, '');
-		// Guardamos la key-value <fechaAMD, totalStars> en caché
-		// Expira en 1 minuto (60s)
-		GuardarEnCache(fechaAMD, JSON.stringify(data), envs.caheTime);
+    var start = new Date();
   	return res.render('index', { 
   		title: 'Top 10 noticias',
   		from: "Base de datos",
@@ -212,26 +208,35 @@ app.get('/', VerificarCache, function(req, res, next) {
 	});
 });
 
-
-app.get('/benchmark', function (err, res) {
-  return res.render('benchmark');
-});
-
+/*-------------------------------
+*   Cargar pagina principal
+*   haciendo uso de la cache
+*--------------------------------*/
 app.get('/microservice', function (err, res) {
   var start = new Date();
-  //var data = GetNewsFromMicroServices();
   var client = thrift.createClient(News, connection);
   client.getTopNews(function(err, response) {
-    // print(response);
-    console.log(response);
     return res.render('microservices', { 
       title: 'Top 10 noticias',
       responseTime: new Date() - start,
       noticias: response
     });
   });
-  
 });
+
+
+app.get('/benchmarkNoCache', function (err, res) {
+  return res.render('benchmarkNoCache');
+});
+
+
+app.get('/benchmarkCache', function (err, res) {
+  return res.render('benchmarkCache');
+});
+
+
+
+
 
 //==================================================
 //		Rutas no encontradas

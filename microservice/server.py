@@ -22,7 +22,7 @@ from thrift.server import TServer
 
 DB_HOST = 'localhost' 
 DB_USER = 'root' 
-DB_PASS = 'root' 
+DB_PASS = '1994' 
 DB_NAME = 'distribuidos'
 R_SERVER = redis.Redis("localhost")
 datos = [DB_HOST, DB_USER, DB_PASS, DB_NAME] 
@@ -38,13 +38,13 @@ class NewsHandler():
 
     def getTopNews(self):
         listNews = []
-        print("Get notices")
+        #print("Get notices")
         query = "SELECT * FROM noticias order by num_accesos DESC limit 10;" 
         startTime = datetime.now()
         result = self.cache_redis(query)
         stopTime = datetime.now()
         # print("Tiempo transcurrido: %f"%stopTime-startTime)
-        print (result)
+        #print (result)
         for res in result:
 
             listNews.append(News(str(res[1]), str(res[2]), int(res[0]), int(res[3])))
@@ -61,11 +61,11 @@ class NewsHandler():
         hash = hashlib.sha224(tiempo).hexdigest()
         
         key = "tiempo_cache:" + hash
-        print ("Created Key\t : %s" % key)
+        #print ("Created Key\t : %s" % key)
 
         # Check if data is in cache.
         if (R_SERVER.get(key)):
-            print ("This was return from redis")    
+            #print ("This was return from redis")    
             return cPickle.loads(R_SERVER.get(key))
         else:
             # Do MySQL query   
@@ -76,7 +76,7 @@ class NewsHandler():
             R_SERVER.set(key, cPickle.dumps(data) )
             R_SERVER.expire(key, TTL)
 
-            print ("Set data redis and return the data")
+            #print ("Set data redis and return the data")
             return cPickle.loads(R_SERVER.get(key))
 
 

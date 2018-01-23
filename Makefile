@@ -14,15 +14,14 @@
 #
 #==================================================================
 
-all: install database start
-	intall && database && start
+all: install database start test
 
 
 install:
 	@echo ".------------------------------------.";
 	@echo "|     Instalando dependencias...     |";
 	@echo "'------------------------------------'";
-	npm install
+	@npm install
 	@echo ".-----------------------------.";
 	@echo "|     Operacion terminada     |";
 	@echo "'-----------------------------'";
@@ -46,12 +45,14 @@ test:
 	@echo ".------------------------------------.";
 	@echo "|       Ejecutando pruebas...        |";
 	@echo "'------------------------------------'";
-	@cd ./tests && node ./benchmark.js $(num) $(con) $(mode)
+	@npm run benchmark
 	@echo ".------------------------------------.";
 	@echo "|        Pruebas terminadas          |";
 	@echo "'------------------------------------'";
-	@echo "\nVisite la ruta:";
-	@echo "\t/benchmark";
+	@echo "\nVisite las rutas:";
+	@echo "\t/benchmarkNoCache";
+	@echo "\t/benchmarkCache";
+
 
 clean:
 	@echo ".------------------------------------.";

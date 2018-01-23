@@ -4,12 +4,18 @@
   "description": "Proyecto final de la materia Sistemas Distribuidos 2017-2T",
   "main": "app.js",
   "scripts": {
-    "start": "node ./bin/www"
+    "server": "node ./bin/www",
+    "microservice": "cd ./microservice && python ./server.py",
+    "benchnocache": "cd ./tests && node ./benchmarkNoCache.js",
+    "benchcache": "cd ./tests && node ./benchmarkCache.js",
+    "benchmark": "concurrently \"npm run benchnocache\" \"npm run benchcache\"",
+    "start": "concurrently --kill-others \"npm run server\" \"npm run microservice\""
   },
   "dependencies": {
     "api-benchmark": "^0.4.2",
     "axios": "^0.17.1",
     "body-parser": "~1.17.1",
+    "concurrently": "^3.5.1",
     "csv-parse": "^2.0.0",
     "ejs": "~2.5.6",
     "express": "~4.15.2",
@@ -21,7 +27,7 @@
     "response-time": "^2.3.2",
     "sequelize": "^4.28.6",
     "sequelize-cli": "^3.2.0",
-    "thrift":"^0.11.0"
+    "thrift": "^0.11.0"
   },
   "repository": {
     "type": "git",

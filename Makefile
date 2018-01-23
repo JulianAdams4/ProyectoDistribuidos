@@ -42,6 +42,17 @@ start:
 	npm start
 
 
+test:
+	@echo ".------------------------------------.";
+	@echo "|       Ejecutando pruebas...        |";
+	@echo "'------------------------------------'";
+	@cd ./tests && node ./benchmark.js $(num) $(con) $(mode)
+	@echo ".------------------------------------.";
+	@echo "|        Pruebas terminadas          |";
+	@echo "'------------------------------------'";
+	@echo "\nVisite la ruta:";
+	@echo "\t/benchmark";
+
 clean:
 	@echo ".------------------------------------.";
 	@echo "|    Eliminando 'node_modules'...    |";

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Api Benchmark :: report</title>
+    <!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/excanvas.min.js"></script><![endif]-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/jquery.jqplot.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/plugins/jqplot.canvasTextRenderer.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/plugins/jqplot.highlighter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/plugins/jqplot.cursor.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.6.1/lodash.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/jquery.jqplot.min.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.0/styles/dark.min.css" type="text/css" />
+
+    <style type="text/css">
+      .jqplot-target {
+        color: #F1F1F1;
+      }
+      table.jqplot-table-legend, table.jqplot-cursor-legend {
+        background-color: rgba(101, 0, 253, 0.89)
+      }
+
+      body {
+        background: #3D3D3D;
+        color: #F1F1F1;
+      }
+
+      a {
+        color: #6699FF;
+      }
+
+      #report-details, #charts {
+        width: 100%;
+        float: left;
+        font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+      }
+
+      #report-details {
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .buttons {
+        width: 100%;
+        border-bottom: 1px solid rgb(75, 72, 72);
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+        text-align: right;
+      }
+
+      .button {
+        margin-right: 10px;
+        padding: 6px;
+        text-decoration: none;
+      }
+
+      .button.selected {
+        background-color: rgb(56, 56, 56);
+      }
+
+      .chart {
+        width: 60%;
+        height: 450px;
+        float: left;
+      }
+
+      .distchart {
+        width: 96%;
+        height: 450px;
+        float: left;
+      }
+
+      .panel {
+        height: 450px;
+        overflow-y: auto;
+      }
+
+      .route {
+        width: 90%;
+        margin: 3%;
+        padding: 2%;
+        float: left;
+        background-color: #000000;
+        border-radius: 15px;
+      }
+      .stats-details {
+        font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+        font-size: 15px;
+        float: left;
+        width: 36%;
+        padding: 2%;
+      }
+
+      .green {
+        color: green;
+      }
+
+      .red {
+        color: red;
+      }
+
+      .hide {
+        display:none;
+      }
+
+      pre code {
+        overflow-x: auto;
+      }
+
+    </style>
+  </head>
+  <body>
+    <script><!--
+    var data={"benchmark":{"Servidor_NodeJs":{"home":{"name":"Servidor_NodeJs/home","href":"http://localhost:3000/","stats":{"sample":[0.013455022,0.004242957,0.001982597,0.002017068,0.00198661,0.002271048,0.00182571,0.001801495,0.002814319,0.001716517,0.00229272,0.003200127,0.001958863,0.001741398,0.001599682,0.001841706,0.002124534,0.001686738,0.001724023,0.001709868,0.001736659,0.002063185,0.001996261,0.001845383,0.002165105,0.001607013,0.00154779,0.001667068,0.001813484,0.001818725,0.001826636,0.001656275,0.002078282,0.001686643,0.002368887,0.00192541,0.001812412,0.002478953,0.001592336,0.00161252,0.001516551,0.001859277,0.001509142,0.001489273,0.001633374,0.001503699,0.001466299,0.00145234,0.001467505,0.001759557,0.001496129,0.00145027,0.00144801,0.001482138,0.00210548,0.001569179,0.001465218,0.001456334,0.001896071,0.001482715,0.001486341,0.001466028,0.001474068,0.001506344,0.00147355,0.001460326,0.001832281,0.001506528,0.001477537,0.001466588,0.001464181,0.001487694,0.001470396,0.001489664,0.002513491,0.001885605,0.001748837,0.001711599,0.002917185,0.001602674,0.001647062,0.00171609,0.001948413,0.001849739,0.002119298,0.001580372,0.001616557,0.001574189,0.003469207,0.001684945,0.001767489,0.001918076,0.001703338,0.001832708,0.001564933,0.001603998,0.001427009,0.001626199,0.001442799,0.001562932,0.001664022,0.001551592,0.001484465,0.001588816,0.001503926,0.001506673,0.001441532,0.002051548,0.001740806,0.001480642,0.002056897,0.001562628,0.001436105,0.001508659,0.001387122,0.001953183,0.001558205,0.001860183,0.001398598,0.001686966,0.001470626,0.001626981,0.001549995,0.001501769,0.00215477,0.001663977,0.001495852,0.001708291,0.00168973,0.001671653,0.001498718,0.001416054,0.001658559,0.001507369,0.001796973,0.001556739,0.001461163,0.001540771,0.001379696,0.001542814,0.001523207,0.001530879,0.001434526,0.002140254,0.001818816,0.001729581,0.001657343,0.001851969,0.001599982,0.001688466,0.001400109,0.001660131,0.001426821,0.001574116,0.001435511,0.001408032,0.001414955,0.001505546,0.001344015,0.002899554,0.002069748,0.001790152,0.001828243,0.001802786,0.001685341,0.00165527,0.001617533,0.001516908,0.002000771,0.001793444,0.001650321,0.001594645,0.001589432,0.001525732,0.001718806,0.001613371,0.001412343,0.001909055,0.001761641,0.001527854,0.001694293,0.001578744,0.001800176,0.001662665,0.001423034,0.0015491,0.001573597,0.001536898,0.001821648,0.001673328,0.001377195,0.001482446,0.002344274,0.001489495,0.001601321,0.00149225,0.001489573,0.001527543,0.001336788,0.001370372,0.002796071,0.001572413,0.001662254,0.001971439,0.001566882,0.002182305,0.001776035,0.001496295,0.001445695,0.001356254,0.001339437,0.001327056,0.001379731,0.001408293,0.001396249,0.001387776,0.001381387,0.001464921,0.001636405,0.002371302,0.001697023,0.001473601,0.001446342,0.001300605,0.001321431,0.00130499,0.001328712,0.001321973,0.001301069,0.001313842,0.001773176,0.001382091,0.001400893,0.001348159,0.001336611,0.001372939,0.001350336,0.001357021,0.001543239,0.001299716,0.001298775,0.001302515,0.001306917,0.001380185,0.001339162,0.001288907,0.00127998,0.00131351,0.001292614,0.001286462,0.001315556,0.001296861,0.001293805,0.001312547,0.001291086,0.001282078,0.001487056,0.001299273,0.002866402,0.001495422,0.001410916,0.001639109,0.001365977,0.001345223,0.001539162,0.00197474,0.001757236,0.001382441,0.001413659,0.001483933,0.001364597,0.001467868,0.001586149,0.001578102,0.001349382,0.00137097,0.001472147,0.001626131,0.001341465,0.001514038,0.001358,0.001331527,0.001828391,0.001763448,0.001741687,0.001355507,0.001275941,0.001336107,0.001597729,0.001389642,0.001502298,0.001694665,0.001497472,0.001484237,0.001339248,0.001422989,0.001460236,0.001327188,0.001334408,0.00153907,0.001323835,0.001449127,0.001426359,0.001432104,0.001395427,0.001338376,0.00168097,0.001606981,0.001509521,0.001421304,0.001428083,0.001306311,0.001427042,0.001430575,0.001467757,0.002207665,0.001601978,0.001653141,0.001643303,0.001483086,0.001379703,0.001307648,0.001320114,0.001489755,0.001332045,0.001312839,0.001675181,0.00148068,0.001430388,0.001500413,0.001435166,0.001503521,0.001344551,0.001292786,0.001436552,0.001291635,0.00131218,0.001467945,0.001298495,0.001415303,0.001346157,0.001299336,0.001440772,0.00152255,0.001296021,0.001336546,0.001399539,0.001556764,0.001370332,0.001320827,0.00143476,0.001494214,0.00137034,0.001343781,0.001412269,0.001300118,0.001317676,0.001453208,0.001319863,0.001278715,0.001432221,0.002164499,0.00152755,0.001357256,0.001322565,0.001301163,0.001407389,0.001308372,0.001465595,0.001375738,0.00141126,0.00136103,0.001411206,0.001274513,0.001407988,0.001308629,0.001326507,0.001311393,0.001451206,0.00134976,0.001294442,0.001317817,0.001374375,0.001329565,0.001319623,0.001535181,0.001454952,0.001500713,0.001389986,0.001302812,0.001426823,0.001534462,0.00150733,0.001388341,0.001886858,0.001553125,0.001825088,0.001284259,0.001417513,0.001413187,0.001423294,0.0015775,0.001324785,0.001765727,0.001553833,0.001329748,0.001464319,0.001536864,0.001292916,0.00136568,0.001317542,0.00130048,0.001510726,0.001579129,0.001329208,0.001592554,0.001334103,0.001328011,0.00158946,0.00132635,0.001427819,0.001310907,0.001259869,0.001386077,0.001333828,0.001268459,0.001288445,0.00133279,0.001252703,0.001254662,0.001374621,0.001435332,0.001374121,0.001326308,0.001257337,0.001522279,0.001324252,0.001282478,0.001426673,0.001300331,0.001659869,0.007149277,0.001695612,0.001643078,0.001467687,0.00159104,0.001514985,0.001414626,0.001611939,0.001330877,0.001570282,0.001536093,0.001482833,0.001551576,0.001428852,0.001850431,0.001373814,0.001316133,0.0013836,0.001238327,0.001234713,0.001419033,0.001372718,0.001240789,0.002110776,0.001670283,0.001828607,0.001418096,0.00151675,0.001475352,0.001564589,0.001440475,0.001543969,0.00159658,0.001717333,0.001394622,0.001372229,0.001609846,0.00136396,0.001728669,0.00140801,0.001559238,0.001626472,0.001621112,0.001303496,0.001424821,0.001264539,0.001490903,0.001275272,0.001270784,0.001491032,0.001420818,0.001240626,0.001431409,0.001585744,0.001328353,0.001334334,0.001454581,0.001694713,0.001342047],"mean":0.0015948281260000018,"singleMean":0.0015948281260000018,"variance":4.3918180394979776e-7,"deviation":0.0006627079326142081,"sem":0.000029637199731074383,"moe":0.00005808891147290579,"rme":3.6423305136083184,"p75":0.00165602375,"p95":0.0021188719,"p99":0.003197297580000003,"p999":0.013455022},"errors":{},"options":{"method":"get","concurrencyLevel":1,"start":"2018-01-23T03:21:04.398Z","end":"2018-01-23T03:21:05.200Z"},"request":{},"response":{"header":{"x-powered-by":"Express","content-type":"text/html; charset=utf-8","content-length":"7456","etag":"W/\"1d20-lKwqSHT4r60X9IUTLjv7qDQkd24\"","x-response-time":"1.443ms","date":"Tue, 23 Jan 2018 03:21:04 GMT","connection":"close"},"statusCode":200,"body":"<!DOCTYPE html>\n<html>\n  <head>\n    <title>Top 10 noticias</title>\n    <style>\n\t\tbody {\n\t\t  padding: 50px;\n\t\t  font: 14px \"Lucida Grande\", Helvetica, Arial, sans-serif;\n\t\t}\n\n\t\ta {\n\t\t  color: #00B7FF;\n\t\t}\n    </style>\n  </head>\n  <body>\n    <h1 style=\"margin-bottom: 0px\">Top 10 noticias</h1>\n    <h3 style=\"margin: 1% 0% 3% 0%\"><small>From:  Redis cache</small></h3>\n    <h3>Response time:  1 ms</h3>\n\n    <h1 style=\"margin-bottom: 0px\"> Noticias: </h1>\n\n\t\n\t   <div class=\"noticia\" style=\"margin: 1% 2%\">\n\t   \t<span class=\"encabezado-noticia\">\n\t   \t\t<span style=\"width: 50%; text-align: left; float: left;\">\n\t   \t\t\t<h3 style=\"margin: 1% 0% 2% 5%\">\n\t   \t\t\t\tBoth ways\n\t   \t\t\t</h3>\n\t   \t\t</span>\n\t   \t\t<span style=\"width: 50%; text-align: right; float: left;\">\n\t   \t\t\t<h3 style=\"margin: 1% 10% 2% 1%\">\n\t   \t\t\t\t( 99553 visitas )\n\t   \t\t\t</h3>\n\t   \t\t</span>\n\t   \t</span>\n\n\t    <span class=\"contenido-noticia\">\n\t    \t<p style=\"margin: 1% 0% 1% 4%; font-size: 1.2em;\">\n\t    \t\thttp://www.business-standard.com/article/opinion/both-ways-114031001089_1.html\n\t    \t</p>\n\t    </span> \n\n\t    <hr>\n\t   </div>\n\t\n\t   <div class=\"noticia\" style=\"margin: 1% 2%\">\n\t   \t<span class=\"encabezado-noticia\">\n\t   \t\t<span style=\"width: 50%; text-align: left; float: left;\">\n\t   \t\t\t<h3 style=\"margin: 1% 0% 2% 5%\">\n\t   \t\t\t\tChina&#39;s trade deficit and structural worries in Europe, among the main issues\n\t   \t\t\t</h3>\n\t   \t\t</span>\n\t   \t\t<span style=\"width: 50%; text-align: right; float: left;\">\n\t   \t\t\t<h3 style=\"margin: 1% 10% 2% 1%\">\n\t   \t\t\t\t( 99376 visitas )\n\t   \t\t\t</h3>\n\t   \t\t</span>\n\t   \t</span>\n\n\t    <span class=\"contenido-noticia\">\n\t    \t<p style=\"margin: 1% 0% 1% 4%; font-size: 1.2em;\">\n\t    \t\thttp://www.fxstreet.com/analysis/strategic-currency-briefing/2014/03/10/\n\t    \t</p>\n\t    </span> \n\n\t    <hr>\n\t   </div>\n\t\n\t   <div class=\"noticia\" style=\"margin: 1% 2%\">\n\t   \t<span class=\"encabezado-noticia\">\n\t   \t\t<span style=\"width: 50%; text-align: left; float: left;\">\n\t   \t\t\t<h3 style=\"margin: 1% 0% 2% 5%\">\n\t   \t\t\t\tUPDATE 2-McDonald&#39;s US sales continue to struggle in February\n\t   \t\t\t</h3>\n\t   \t\t</span>\n\t   \t\t<span style=\"width: 50%; text-align: right; float: left;\">\n\t   \t\t\t<h3 style=\"margin: 1% 10% 2% 1%\">\n\t   \t\t\t\t( 98495 visitas )\n\t   \t\t\t</h3>\n\t   \t\t</span>\n\t   \t</span>\n\n\t    <span class=\"contenido-noticia\">\n\t    \t<p style=\"margin: 1% 0% 1% 4%; font-size: 1.2em;\">\n\t    \t\thttp://www.reuters.com/article/2014/03/10/mcdonalds-sales-idUSL2N0M70PB20140310\n\t    \t</p>\n\t    </span> \n\n\t    <hr>\n\t   </div>\n\t\n\t   <div class=\"noticia\" style=\"margin: 1% 2%\">\n\t   \t<span class=\"encabezado-noticia\">\n\t   \t\t<span style=\"width: 50%; text-align: left; float: left;\">\n\t   \t\t\t<h3 style=\"margin: 1% 0% 2% 5%\">\n\t   \t\t\t\tMcDonald&#39;s US sales fall 1.4 per cent in February as chain looks to adapt to  ...\n\t   \t\t\t</h3>\n\t   \t\t</span>\n\t   \t\t<span style=\"width: 50%; text-align: right; float: left;\">\n\t   \t\t\t<h3 style=\"margin: 1% 10% 2% 1%\">\n\t   \t\t\t\t( 97450 visitas )\n\t   \t\t\t</h3>\n\t   \t\t</span>\n\t   \t</span>\n\n\t    <span class=\"contenido-noticia\">\n\t    \t<p style=\"margin: 1% 0% 1% 4%; font-size: 1.2em;\">\n\t    \t\thttp://www.globalpost.com/dispatch/news/the-canadian-press/140310/mcdonalds-us-sales-fall-14-cent-february-hampered-again-bad-\n\t    \t</p>\n\t    </span> \n\n\t    <hr>\n\t   </div>\n\t\n\t   <div class=\"noticia\" style=\"margin: 1% 2%\">\n\t   \t<span class=\"encabezado-noticia\">\n\t   \t\t<span style=\"width: 50%; text-align: left; float: left;\">\n\t   \t\t\t<h3 style=\"margin: 1% 0% 2% 5%\">\n\t   \t\t\t\tMcDonald&#39;s posts weak February sales results\n\t   \t\t\t</h3>\n\t   \t\t</span>\n\t   \t\t<span style=\"width: 50%; text-align: right; float: left;\">\n\t   \t\t\t<h3 style=\"margin: 1% 10% 2% 1%\">\n\t   \t\t\t\t( 95326 visitas )\n\t   \t\t\t</h3>\n\t   \t\t</span>\n\t   \t</span>\n\n\t    <span class=\"contenido-noticia\">\n\t    \t<p style=\"margin: 1% 0% 1% 4%; font-size: 1.2em;\">\n\t    \t\thttp://www.proactiveinvestors.com/companies/news/52649/mcdonalds-posts-weak-february-sales-results-52649.html\n\t    \t</p>\n\t    </span> \n\n\t    <hr>\n\t   </div>\n\t\n\t   <div class=\"noticia\" style=\"margin: 1% 2%\">\n\t   \t<span class=\"encabezado-noticia\">\n\t   \t\t<span style=\"width: 50%; text-align: left; float: left;\">\n\t   \t\t\t<h3 style=\"margin: 1% 0% 2% 5%\">\n\t   \t\t\t\tEBay says Carl Icahn&#39;s board picks &#39;not qualified&#39;\n\t   \t\t\t</h3>\n\t   \t\t</span>\n\t   \t\t<span style=\"width: 50%; text-align: right; float: left;\">\n\t   \t\t\t<h3 style=\"margin: 1% 10% 2% 1%\">\n\t   \t\t\t\t( 93896 visitas )\n\t   \t\t\t</h3>\n\t   \t\t</span>\n\t   \t</span>\n\n\t    <span class=\"contenido-noticia\">\n\t    \t<p style=\"margin: 1% 0% 1% 4%; font-size: 1.2em;\">\n\t    \t\thttp://www.marketwatch.com/story/ebay-says-carl-icahns-board-picks-not-qualified-2014-03-10\\?link=MW_latest_news\n\t    \t</p>\n\t    </span> \n\n\t    <hr>\n\t   </div>\n\t\n\t   <div class=\"noticia\" style=\"margin: 1% 2%\">\n\t   \t<span class=\"encabezado-noticia\">\n\t   \t\t<span style=\"width: 50%; text-align: left; float: left;\">\n\t   \t\t\t<h3 style=\"margin: 1% 0% 2% 5%\">\n\t   \t\t\t\t3 things to watch for as McDonald&#39;s fights to boost US sales\n\t   \t\t\t</h3>\n\t   \t\t</span>\n\t   \t\t<span style=\"width: 50%; text-align: right; float: left;\">\n\t   \t\t\t<h3 style=\"margin: 1% 10% 2% 1%\">\n\t   \t\t\t\t( 92988 visitas )\n\t   \t\t\t</h3>\n\t   \t\t</span>\n\t   \t</span>\n\n\t    <span class=\"contenido-noticia\">\n\t    \t<p style=\"margin: 1% 0% 1% 4%; font-size: 1.2em;\">\n\t    \t\thttp://www.globalpost.com/dispatch/news/the-canadian-press/140310/3-things-watch-mcdonalds-fights-boost-us-sales\n\t    \t</p>\n\t    </span> \n\n\t    <hr>\n\t   </div>\n\t\n\t   <div class=\"noticia\" style=\"margin: 1% 2%\">\n\t   \t<span class=\"encabezado-noticia\">\n\t   \t\t<span style=\"width: 50%; text-align: left; float: left;\">\n\t   \t\t\t<h3 style=\"margin: 1% 0% 2% 5%\">\n\t   \t\t\t\tECB requires tougher call on bad loan definition\n\t   \t\t\t</h3>\n\t   \t\t</span>\n\t   \t\t<span style=\"width: 50%; text-align: right; float: left;\">\n\t   \t\t\t<h3 style=\"margin: 1% 10% 2% 1%\">\n\t   \t\t\t\t( 92744 visitas )\n\t   \t\t\t</h3>\n\t   \t\t</span>\n\t   \t</span>\n\n\t    <span class=\"contenido-noticia\">\n\t    \t<p style=\"margin: 1% 0% 1% 4%; font-size: 1.2em;\">\n\t    \t\thttp://www.ifamagazine.com/news/ecb-requires-tougher-call-on-bad-loan-definition-294417\n\t    \t</p>\n\t    </span> \n\n\t    <hr>\n\t   </div>\n\t\n\t   <div class=\"noticia\" style=\"margin: 1% 2%\">\n\t   \t<span class=\"encabezado-noticia\">\n\t   \t\t<span style=\"width: 50%; text-align: left; float: left;\">\n\t   \t\t\t<h3 style=\"margin: 1% 0% 2% 5%\">\n\t   \t\t\t\tCarl Icahn slams eBay CEO\n\t   \t\t\t</h3>\n\t   \t\t</span>\n\t   \t\t<span style=\"width: 50%; text-align: right; float: left;\">\n\t   \t\t\t<h3 style=\"margin: 1% 10% 2% 1%\">\n\t   \t\t\t\t( 92351 visitas )\n\t   \t\t\t</h3>\n\t   \t\t</span>\n\t   \t</span>\n\n\t    <span class=\"contenido-noticia\">\n\t    \t<p style=\"margin: 1% 0% 1% 4%; font-size: 1.2em;\">\n\t    \t\thttp://www.cityam.com/blog/1394460724/carl-icahn-slams-ebay-ceo\n\t    \t</p>\n\t    </span> \n\n\t    <hr>\n\t   </div>\n\t\n\t   <div class=\"noticia\" style=\"margin: 1% 2%\">\n\t   \t<span class=\"encabezado-noticia\">\n\t   \t\t<span style=\"width: 50%; text-align: left; float: left;\">\n\t   \t\t\t<h3 style=\"margin: 1% 0% 2% 5%\">\n\t   \t\t\t\teBay asks stockholders to oppose Icahn nominees\n\t   \t\t\t</h3>\n\t   \t\t</span>\n\t   \t\t<span style=\"width: 50%; text-align: right; float: left;\">\n\t   \t\t\t<h3 style=\"margin: 1% 10% 2% 1%\">\n\t   \t\t\t\t( 92006 visitas )\n\t   \t\t\t</h3>\n\t   \t\t</span>\n\t   \t</span>\n\n\t    <span class=\"contenido-noticia\">\n\t    \t<p style=\"margin: 1% 0% 1% 4%; font-size: 1.2em;\">\n\t    \t\thttp://news.muckety.com/2014/03/10/ebay-asks-stockholders-to-oppose-icahn-nominees/46191\n\t    \t</p>\n\t    </span> \n\n\t    <hr>\n\t   </div>\n\t\n\n  </body>\n</html>\n","type":"text/html"},"hz":627.0268148004801}}},"info":{"date":"2018-01-23T03:21:05.207Z","apiName":"Servidor_NodeJs"}};
+    // --></script>
+    <div id="report">
+      <div id="report-details"><h1>Api Benchmark report</h1></div>
+      <div id="charts"></div>
+    </div>
+    <div style="text-align: center">
+    Generated by <a href="https://github.com/matteofigus/api-benchmark" target="_blank">api-benchmark</a><br /><br />
+    <iframe src="http://ghbtns.com/github-btn.html?user=matteofigus&repo=api-benchmark&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>
+    </div>
+    <script>
+
+      var selectors = {
+        charts: '#charts',
+        reportDetails: '#report-details',
+        panel: '.panel',
+        panels: {
+          stats: '.stats',
+          distribution: '.distribution',
+          response: '.response',
+          request: '.request'
+        },
+        button: '.button',
+        buttons: {
+          stats: '.button-stats',
+          distribution: '.button-distribution',
+          response: '.button-response',
+          request: '.button-request'
+        }
+      };
+
+      var formatNumber = function(number) {
+        number = String(number).split('.');
+        return number[0].replace(/(?=(?:\d{3})+$)(?!\b)/g, ',') +
+          (number[1] ? '.' + number[1] : '');
+      };
+
+      var formatDate = function(date){
+        return date.replace(/T/g, ' ').replace(/Z/g, ' ');
+      };
+
+      var fixNumber = function(number, digits){
+        return formatNumber(number.toFixed(digits));
+      };
+
+      var decodeHtml = function(text){
+        return $('<div/>').text(text).html();
+      };
+
+      var templates = {
+        reportDetails: function(info){
+          var formattedDate = formatDate(info.date);
+          return 'Benchmarked ' + info.apiName + ' on ' + formattedDate;
+        },
+        route: function(routeData, i){
+          var errorsCount = 0,
+              errorsDesc = '(',
+              duration = (new Date(routeData.options.end) - new Date(routeData.options.start))/1e3;
+
+          for(var errorType in routeData.errors){
+            errorsCount += routeData.errors[errorType].length;
+            errorsDesc += routeData.errors[errorType].length + ' ' + errorType + ',';
+          }
+
+          if(errorsCount == 0)
+            errorsDesc = '';
+          else
+            errorsDesc = errorsDesc.substr(0, errorsDesc.length - 1) + ')';
+
+          var template = '<div class="route"><div class="buttons">' +
+            '<a href="#stats" class="button button-stats selected">Stats</a>' +
+            '<a href="#distribution" class="button button-distribution">Distribution</a>' +
+            '<a href="#request" class="button button-request">Request details</a>' +
+            '<a href="#response" class="button button-response">Response details</a>' +
+            '</div><div class="stats panel"><div class="chart" id="chart' + i + '"></div>' +
+            '<div class="stats-details"><ul><li>' + routeData.stats.sample.length + ' run' +
+            (routeData.stats.sample.length > 1 ? 's' : '') + ' sampled with concurrency: ' +
+            routeData.options.concurrencyLevel + '</li>';
+
+          if(routeData.options.expectedStatusCode)
+            template += '<li>Expected status code: ' + routeData.options.expectedStatusCode + '</li>';
+
+          if(routeData.options.maxMean)
+            template += '<li>Expected max mean: ' + routeData.options.maxMean + '</li>';
+
+          if(routeData.options.maxSingleMean)
+            template += '<li>(*) Expected max mean across all concurrent requests: ' + routeData.options.maxSingleMean + '</li>';
+
+          template += '</ul><ul><li>Started: ' + formatDate(routeData.options.start) + '</li>' +
+            '<li>Ended: ' + formatDate(routeData.options.end) + ' (' + duration + ' seconds)</li>' +
+            '<li>' + fixNumber(routeData.hz, 2) + ' ops/sec \xb1 ' + fixNumber(routeData.stats.rme, 2) + '%</li>' +
+
+            '<li class="' + (!errorsCount ? 'green' : 'red') + '">' + errorsCount + ' error' +
+            (errorsCount == 1 ? '' : 's') + ' ' + errorsDesc + '</li>' +
+
+            '<li>Sample arithmetic mean: ' + fixNumber(routeData.stats.mean, 6) + '</li>';
+
+          if(routeData.options.concurrencyLevel > 1)
+            template += '<li>Mean across all the concurrent requests: ' + fixNumber(routeData.stats.singleMean, 6) + '</li>';
+
+          template += '<li>Sample standard deviation: ' + fixNumber(routeData.stats.deviation, 6) + '</li>' +
+            '<li>Margin of error: ' + fixNumber(routeData.stats.moe, 6) + '</li>' +
+            '<li>The standard error of the mean: ' + fixNumber(routeData.stats.sem, 6) + '</li>' +
+            '<li>The sample variance: ' + fixNumber(routeData.stats.variance, 6) + '</li>' +
+            '</ul><ul><li>75% Percentile: ' + fixNumber(routeData.stats.p75, 6) + '</li>' +
+            '<li>95% Percentile: ' + fixNumber(routeData.stats.p95, 6) + '</li>' +
+            '<li>99% Percentile: ' + fixNumber(routeData.stats.p99, 6) + '</li>' +
+            '<li>99.9% Percentile: ' + fixNumber(routeData.stats.p999, 6) + '</li>' +
+            '</ul></div></div><div class="distribution panel"><div class="distchart" id="distchart' + i + '">' +
+            '</div></div><div class="request panel hide">Request: ' + routeData.options.method.toUpperCase() +
+            ' <a href="' + routeData.href + '" target="_blank">' +
+            routeData.href + '</a><br />Concurrency level: ' + routeData.options.concurrencyLevel + '<br />';
+
+          if(routeData.options.delay)
+            template += 'Delay between bench cycles: ' + routeData.options.delay + '<br />';
+
+          var requestHeaders = 'none',
+              requestData = 'none',
+              requestQuery = 'none';
+
+          if(!!routeData.request.headers)
+            requestHeaders = '<br /><pre><code>' + JSON.stringify(routeData.request.headers, undefined, 2) + '</pre></code>';
+
+          if(!!routeData.request.data)
+            requestData = '<br /><pre><code>' + JSON.stringify(routeData.request.data, undefined, 2) + '</pre></code>';
+
+          if(!!routeData.request.query)
+            requestQuery = '<br /><pre><code>' + JSON.stringify(routeData.request.query, undefined, 2) + '</pre></code>';
+
+          template += '<br />Headers sent: ' + requestHeaders + '<br />Data sent: ' + requestData + '<br />Query sent: ' + requestQuery + '<br /></div><div class="response panel hide">Data here refers to the first sampled response.<br /><br />';
+
+          var responseHeader = JSON.stringify(routeData.response.header, undefined, 2),
+              responseBody = '';
+
+          try {
+            responseBody = JSON.stringify(JSON.parse(decodeHtml(routeData.response.body)), undefined, 2);
+          } catch(e){
+            responseBody = decodeHtml(routeData.response.body);
+          }
+
+          template += 'Response status: ' + routeData.response.statusCode + '<br />Response headers:<br />' +
+            '<pre><code>' + responseHeader + '</code></pre>' +
+            '<br />Response body:<br /><pre><code>' + responseBody + '</code></pre><br /></div></div>';
+
+          return template;
+        }
+      };
+
+      var bindButtons = function(){
+        var bindButton = function(panelName){
+          $(selectors.buttons[panelName]).click(function(){
+            var $sender = $(this),
+                $panelsContainer = $sender.parent().parent();
+
+            $panelsContainer.find(selectors.button).removeClass('selected');
+            $sender.addClass('selected');
+
+            $panelsContainer.find(selectors.panel).addClass('hide');
+            $panelsContainer.find(selectors.panels[panelName]).removeClass('hide');
+
+            return false;
+          });
+        };
+
+        bindButton('stats');
+        bindButton('distribution');
+        bindButton('response');
+        bindButton('request');
+      };
+
+      $(function(){
+        $(selectors.reportDetails).append(templates.reportDetails(data.info));
+
+        var counter = 0;
+        for(serviceName in data.benchmark){
+          for(routeName in data.benchmark[serviceName]){
+            $(selectors.charts).append(templates.route(data.benchmark[serviceName][routeName], counter));
+
+            var samples = data.benchmark[serviceName][routeName]['stats']['sample'],
+                meanArray = [],
+                mean = data.benchmark[serviceName][routeName]['stats']['mean'],
+                singleMeanArray = [],
+                singleMean = data.benchmark[serviceName][routeName]['stats']['singleMean'],
+                maxMeanArray = [],
+                maxMean = data.benchmark[serviceName][routeName].options.maxMean !== undefined,
+                maxSingleMeanArray = [],
+                maxSingleMean = data.benchmark[serviceName][routeName].options.maxSingleMean !== undefined,
+                errorsArray = [],
+                areThereSomeErrors = false;
+
+            for(var i = 0; i < samples.length; i++){
+              meanArray.push(mean);
+              singleMeanArray.push(singleMean);
+
+              errorsArray.push(null);
+
+              if(maxMean)
+                maxMeanArray.push(data.benchmark[serviceName][routeName].options.maxMean);
+
+              if(maxSingleMean)
+                maxSingleMeanArray.push(data.benchmark[serviceName][routeName].options.maxSingleMean);
+            }
+
+            for(var errorType in data.benchmark[serviceName][routeName].errors){
+              var errorsOfType = data.benchmark[serviceName][routeName]['errors'][errorType];
+              for(var i = 0; i < errorsOfType.length; i++){
+                if(errorsOfType[i].pos !== undefined){
+                  errorsArray[errorsOfType[i].pos] = data.benchmark[serviceName][routeName]['stats']['sample'][errorsOfType[i].pos];
+                  areThereSomeErrors = true;
+                }
+              }
+            }
+
+            var getSeriesOptions = function(label, color){
+              return {
+                showMarker: false,
+                pointLabels: { show: true },
+                label: label,
+                color: color
+              };
+            };
+
+            var lines = [samples],
+                series = [getSeriesOptions('Samples', '#6699FF')];
+
+            if(maxMean){
+              lines.push(maxMeanArray);
+              series.push(getSeriesOptions('Max Mean', '#F90'));
+            }
+
+            lines.push(meanArray);
+            series.push(getSeriesOptions('Mean', '#66FF00'));
+
+            if(maxSingleMean){
+              lines.push(maxSingleMeanArray);
+              series.push(getSeriesOptions('Max Single Mean (*)', '#EBFF00'));
+
+              lines.push(singleMeanArray);
+              series.push(getSeriesOptions('Single mean', '#FC6333'));
+            }
+
+            if(areThereSomeErrors > 0){
+              lines.push(errorsArray);
+              series.push({
+                showLine:false,
+                markerOptions: { size: 7, style:'x' },
+                label: 'Errors',
+                color: '#FF0000'
+              });
+            }
+
+            var options = {
+              title: {
+                text: data.benchmark[serviceName][routeName]['name'],
+                color: '#F1F1F1'
+              },
+              animate: true,
+              grid: {
+                background: '#000000', textColor: '#F1F1F1'
+              },
+              seriesDefaults:{
+                rendererOptions: {
+                  showDataLabels: true
+                }
+              },
+              highlighter: {
+                show: true,
+                sizeAdjust: 7.5
+              },
+              cursor:{
+                show: true,
+                zoom:true,
+              },
+              legend: {
+                show:true,
+                location: 'se',
+                background: 'rgba(101, 0, 253, 0.89)'
+              },
+              axesDefaults: {
+                labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+              },
+              axes: {
+                xaxis: {
+                  label: 'Samples',
+                  pad: 0
+                },
+                yaxis: {
+                  label: 'Response time (seconds)',
+                  tickOptions: {
+                    formatString:'%.6f'
+                  }
+                }
+              },
+              series: series
+            };
+
+            $.jqplot('chart' + counter, lines, options);
+            counter++;
+          }
+        }
+        hljs.initHighlightingOnLoad();
+        bindButtons();
+      });
+
+      $(function(){
+        var counter = 0;
+        for(serviceName in data.benchmark){
+          for(routeName in data.benchmark[serviceName]){
+            var samples = data.benchmark[serviceName][routeName]['stats']['sample'];
+            var sortedSamples = _.orderBy(samples);
+            var totalDelta = sortedSamples[sortedSamples.length - 1] - sortedSamples[0];
+
+            var bucketCount = ~~Math.min(totalDelta*1000, sortedSamples.length);
+            var delta = totalDelta/bucketCount;
+
+            var buckets = [[sortedSamples[0] + delta/2.0, 0]];
+
+            for (var i = 0; i < samples.length; i++) {
+              var s = sortedSamples[i];
+              while(s > (sortedSamples[0] + buckets.length * delta)) {
+                buckets.push([(sortedSamples[0] + buckets.length * delta + delta/2.0), 0]);
+              }
+              buckets[buckets.length - 1][1]++;
+            }
+
+            buckets = _.map(buckets, function(b){
+              return [b[0], 100*b[1]/samples.length];
+            });
+
+
+            var lines = [buckets],
+                series = [{
+                  showMarker: false,
+                  pointLabels: { show: true },
+                  label: 'Samples',
+                  color: '#6699FF',
+                  rendererOptions: {
+                    smooth: true
+                  }
+                }];
+
+            var options = {
+              title: {
+                text: data.benchmark[serviceName][routeName]['name'],
+                color: '#F1F1F1'
+              },
+              animate: true,
+              grid: {
+                background: '#000000', textColor: '#F1F1F1'
+              },
+              seriesDefaults:{
+                rendererOptions: {
+                  showDataLabels: true
+                }
+              },
+              highlighter: {
+                show: true,
+                sizeAdjust: 7.5
+              },
+              legend: {
+                show:true,
+                location: 'se',
+                background: 'rgba(101, 0, 253, 0.89)'
+              },
+              cursor:{
+                show: true,
+                zoom:true,
+              },
+              axesDefaults: {
+                labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+              },
+              axes: {
+                xaxis: {
+                  label: 'Response time (seconds)',
+                  tickOptions: {
+                    formatString:'%.3f'
+                  }
+                },
+                yaxis: {
+                  label: 'Percent of responses',
+                  tickOptions: {
+                    formatString: '%.1f%'
+                  }
+                }
+              },
+              series: series
+            };
+
+            $.jqplot('distchart' + counter, lines, options);
+            counter++;
+          }
+        }
+        $(".distribution.panel").addClass('hide');
+      });
+    </script>
+  </body>
+</html>

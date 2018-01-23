@@ -3,6 +3,7 @@
 //===========================
 var express = require('express');
 var path = require('path');
+var fs = require('fs');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var responseTime = require('response-time')
@@ -115,6 +116,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 
+/*------------------------------------------
+*    Archivos vacios para las pruebas
+*-------------------------------------------*/
+/*
+const filePath = __dirname+'/views/benchmark.ejs';
+fs.writeFileSync( filePath, '');
+*/
+
+
 
 //===================================
 //		Funciones 
@@ -203,6 +213,9 @@ app.get('/', VerificarCache, function(req, res, next) {
 });
 
 
+app.get('/benchmark', function (err, res) {
+  return res.render('benchmark');
+});
 
 
 //==================================================

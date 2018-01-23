@@ -208,7 +208,6 @@ app.get('/', function(req, res, next) {
   	return res.render('index', { 
   		title: 'Top 10 noticias',
   		from: "Base de datos",
-  		responseTime: new Date() - start,
   		noticias: data
   	});
 	});
@@ -224,7 +223,6 @@ app.get('/microservice', function (err, res) {
   client.getTopNews(function(err, response) {
     return res.render('microservices', { 
       title: 'Top 10 noticias',
-      responseTime: new Date() - start,
       noticias: response
     });
   });

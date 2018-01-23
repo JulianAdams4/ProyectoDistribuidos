@@ -22,7 +22,7 @@ from thrift.server import TServer
 
 DB_HOST = 'localhost' 
 DB_USER = 'root' 
-DB_PASS = '1994' 
+DB_PASS = 'root' 
 DB_NAME = 'distribuidos'
 R_SERVER = redis.Redis("localhost")
 datos = [DB_HOST, DB_USER, DB_PASS, DB_NAME] 
